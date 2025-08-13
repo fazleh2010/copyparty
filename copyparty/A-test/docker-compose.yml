@@ -1,0 +1,33 @@
+version: '3.8'
+
+services:
+  db:
+    image: mysql:5.7
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: secret
+      MYSQL_DATABASE: mediawiki
+      MYSQL_USER: wikiuser
+      MYSQL_PASSWORD: wikipass
+    volumes:
+      - db-data:/var/lib/mysql
+
+  mediawiki:
+    image: mediawiki
+    restart: always
+    ports:
+      - "8080:80"
+    environment:
+      MEDIAWIKI_DB_TYPE: mysql
+      MEDIAWIKI_DB_HOST: db
+      MEDIAWIKI_DB_NAME: mediawiki
+      MEDIAWIKI_DB_USER: wikiuser
+      MEDIAWIKI_DB_PASSWORD: wikipass
+    depends_on:
+      - db
+    volumes:
+      - ./LocalSettings.php:/var/www/html/LocalSettings.php # Optional: mount your config
+
+volumes:
+  db-data:
+
